@@ -1,18 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
-import Paper from 'material-ui/Paper';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { trim, get } from 'lodash';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
 import { compose, pure, withPropsOnChange, withHandlers, getContext } from 'recompose';
 import sleep from 'sleep-promise';
-import TextField from 'material-ui/TextField';
-import IconButton from 'material-ui/IconButton';
-import CallIcon from 'material-ui-icons/Call';
-import CallEndIcon from 'material-ui-icons/CallEnd';
-import PhoneInTalkIcon from 'material-ui-icons/PhoneInTalk';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import CallIcon from '@material-ui/icons/Call';
+import CallEndIcon from '@material-ui/icons/CallEnd';
+import PhoneInTalkIcon from '@material-ui/icons/PhoneInTalk';
 import { translate } from 'react-i18next';
 import {
   SIP_STATUS_CONNECTED,
@@ -26,14 +25,12 @@ import { CONFERENCE_PHONE_NUMBER } from '../config';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
-const Wrapper = styled(Paper).attrs({
-  elevation: 0,
-})`
+const Wrapper = styled.div`
   display: flex;
   flex-grow: 1;
   align-items: center;
   justify-content: center;
-  padding-top: 10px;
+  padding-top: 10px;  
 `;
 const CallForm = styled.div`
   max-width: 600px;
@@ -206,19 +203,22 @@ export default compose(
           });
           const config = get(response, ['data', 'generateSipConfig', 'config']);
           updateSipConfig(config);
-          let i = 20;
+          let i = 50;
           while (i > 0 && getSipStatus() !== SIP_STATUS_CONNECTED) {
             // eslint-disable-next-line no-await-in-loop
+            console.log('current status was: ', getSipStatus());
             await sleep(100);
             i -= 1;
           }
+          console.log('current status: ', getSipStatus());
           startCall(phoneNumberForSip);
           addToCallLog({
             phoneNumber: phoneNumberForLog,
             startTimestamp: +new Date(),
           });
         } catch (e) {
-          requireLogin();
+          console.error('error calling :', e);
+          // requireLogin();
         }
       }
     },

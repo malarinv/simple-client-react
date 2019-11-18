@@ -2,8 +2,9 @@ import React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import { blue } from 'material-ui/colors';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core';
+import { blue } from '@material-ui/core/colors';
 
 import client from '../graphql/client';
 

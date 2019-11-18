@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
-import Paper from 'material-ui/Paper';
 import { compose, getContext, withHandlers, withPropsOnChange, lifecycle } from 'recompose';
 import { CALL_STATUS_IDLE } from 'react-sip';
 import { connect } from 'react-redux';
-import List, { ListItem, ListItemText, ListSubheader } from 'material-ui/List';
+import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core';
 import { UpdateDialer } from '../graphql/mutations';
 
 const timeago = require('timeago.js');
@@ -34,9 +33,7 @@ timeago.register('custom', timeagoDictionary);
 
 const timeagoInstance = timeago();
 
-const Wrapper = styled(Paper).attrs({
-  elevation: 0,
-})`
+const Wrapper = styled.div`
   flex-grow: 1;
   display: flex;
 `;
