@@ -4,7 +4,6 @@ import { graphql } from 'react-apollo';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { trim, get } from 'lodash';
-import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
 import { compose, pure, withPropsOnChange, withHandlers, getContext } from 'recompose';
 import sleep from 'sleep-promise';
 import TextField from '@material-ui/core/TextField';
@@ -21,9 +20,6 @@ import {
 } from 'react-sip';
 import { DialerInfo } from '../graphql/queries';
 import { GenerateSipConfig, UpdateDialer } from '../graphql/mutations';
-import { CONFERENCE_PHONE_NUMBER } from '../config';
-
-const phoneUtil = PhoneNumberUtil.getInstance();
 
 const Wrapper = styled.div`
   display: flex;
@@ -133,17 +129,7 @@ export default compose(
   ),
   withPropsOnChange(['phoneNumber'], ({ phoneNumber }) => {
     const phoneNumberIsEmpty = trim(phoneNumber) === '';
-    let phoneNumberIsValid = false;
-    if (phoneNumber.replace(/\s/g, '') === CONFERENCE_PHONE_NUMBER) {
-      phoneNumberIsValid = true;
-    } else if (!phoneNumberIsEmpty) {
-      try {
-        const phoneNumberProto = phoneUtil.parse(phoneNumber, 'UK');
-        phoneNumberIsValid = phoneUtil.isValidNumber(phoneNumberProto);
-      } catch (e) {
-        /* eslint-disable-line no-empty */
-      }
-    }
+    let phoneNumberIsValid = true;
     return {
       phoneNumberIsValid,
       phoneNumberIsEmpty,
@@ -179,21 +165,8 @@ export default compose(
       updateSipConfig,
     }) => async () => {
       if (callStatus === CALL_STATUS_IDLE && phoneNumberIsValid) {
-        let phoneNumberForSip;
-        let phoneNumberForLog;
-        if (phoneNumber.replace(/\s/g, '') === CONFERENCE_PHONE_NUMBER) {
-          phoneNumberForSip = CONFERENCE_PHONE_NUMBER;
-          phoneNumberForLog = CONFERENCE_PHONE_NUMBER;
-        } else {
-          phoneNumberForSip = phoneUtil.format(
-            phoneUtil.parse(phoneNumber, 'UK'),
-            PhoneNumberFormat.E164,
-          );
-          phoneNumberForLog = phoneUtil.format(
-            phoneUtil.parse(phoneNumber, 'UK'),
-            PhoneNumberFormat.INTERNATIONAL,
-          );
-        }
+        let phoneNumberForSip = phoneNumber;
+        let phoneNumberForLog = phoneNumber;
         await updateDialer({ variables: { phoneNumber: phoneNumberForLog } });
         try {
           const response = await generateSipConfig({

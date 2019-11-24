@@ -1,1 +1,1 @@
-export const CONFERENCE_PHONE_NUMBER = '6004';
+export const CONFERENCE_PHONE_NUMBER = '6002';
